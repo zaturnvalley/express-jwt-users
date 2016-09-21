@@ -10,6 +10,13 @@ var secret = 'bestkeptsecretever999';
 
 mongoose.connect('mongodb://localhost:27017/myauthenticatedusers');
 
+app.use('/api/users', expressJWT({secret: secret}).unless({method: 'POST'}));
+app.use(function(err, req, res, next) {
+  if(err.name === 'UnauthorizedError') {
+    res.status(401).send({message: 'You need authorization'});
+  }
+});
+
 app.use(bodyParser.urlencoded({extended:true}));
 app.use('/api/users', require('./controllers/users'));
 
